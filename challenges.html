@@ -35,13 +35,17 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="index.html" class="font-poppins font-bold text-2xl text-primary flex items-center">
-                            <span class="relative mr-2">
-                                <i class="fas fa-mountain text-soil text-lg" style="transform: scaleY(0.3) translateY(8px)"></i>
-                                <i class="fas fa-seedling text-primary absolute -top-2 left-1/2 transform -translate-x-1/2"></i>
-                            </span>
-                            Antidote
-                        </a>
+                        <div class="flex flex-col items-center">
+                            <a href="index.html" class="font-poppins font-bold text-2xl text-primary flex items-center">
+                                <span class="relative mr-2 inline-block" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-flask text-primary text-2xl absolute bottom-0 left-1/2 transform -translate-x-1/2" style="z-index: 1"></i>
+                                    <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2" style="z-index: 2; width: 16px; height: 8px; background-color: #7C2D12; border-radius: 2px 2px 8px 8px;"></div>
+                                <i class="fas fa-seedling text-primary text-xl absolute bottom-1 left-1/2 transform -translate-x-1/2 -translate-y-2" style="z-index: 3"></i>
+                                </span>
+                                Antidote
+                            </a>
+                            <span class="text-xs text-gray-600 mt-1">The Cure Starts Within</span>
+                        </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                         <a href="timer.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Timer</a>
