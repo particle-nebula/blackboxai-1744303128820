@@ -5,9 +5,36 @@ const toggleCircle = document.getElementById('toggle-circle');
 const statusText = document.getElementById('status-text');
 const focusIcon = document.getElementById('focus-icon');
 const blockIndicator = document.getElementById('block-indicator');
+const strictModeBtn = document.getElementById('strict-mode');
+const gentleModeBtn = document.getElementById('gentle-mode');
+const reminderSettings = document.getElementById('reminder-settings');
+const reminderFrequency = document.getElementById('reminder-frequency');
+const reminderStyle = document.getElementById('reminder-style');
 
 // State
 let isFocusModeActive = false;
+let currentMode = 'strict'; // 'strict' or 'gentle'
+let reminderInterval = null;
+let reminderMessages = {
+    gentle: [
+        "Have you finished your work?",
+        "Are you still being productive?",
+        "Taking a quick break might help",
+        "Remember your priorities"
+    ],
+    motivational: [
+        "You're doing great, stay focused!",
+        "Keep pushing forward!",
+        "Every minute counts!",
+        "You've got this!"
+    ],
+    goal: [
+        "Remember your goals!",
+        "Think about what you want to achieve",
+        "Stay on track with your objectives",
+        "Your future self will thank you"
+    ]
+};
 
 // Load state from localStorage
 function loadState() {
