@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antidote - Sign In</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2F855A',    // Forest green
+                        secondary: '#66A80F',  // Leaf green
+                        accent: '#975A16',     // Earth brown
+                        sage: '#9CA3AF',       // Soft sage
+                        moss: '#047857',       // Deep moss
+                        soil: '#92400E'        // Rich soil
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'grow': 'grow 2s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        grow: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-inter" style="background-image: url('https://forestapp.cc/download/og.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-8 space-y-8 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-accent"></div>
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/10 rounded-full blur-2xl"></div>
+
+            <!-- Logo and Title -->
+            <div class="text-center relative">
+                <div class="flex justify-center mb-4">
+                    <div class="relative animate-float" style="width: 64px; height: 64px;">
+                        <i class="fas fa-flask text-primary text-4xl absolute bottom-0 left-1/2 transform -translate-x-1/2" style="z-index: 1"></i>
+                        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2" style="z-index: 2; width: 32px; height: 16px; background-color: #92400E; border-radius: 0 0 16px 16px;"></div>
+                        <i class="fas fa-seedling text-primary text-3xl absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-2 animate-grow" style="z-index: 3;"></i>
+                    </div>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900">Welcome to Antidote</h2>
+                <p class="mt-2 text-sm text-gray-600">Begin your journey to focused productivity</p>
+            </div>
+
+            <!-- Sign In Form -->
+            <form class="mt-8 space-y-6" id="signin-form">
+                <div class="rounded-md shadow-sm space-y-4">
+                    <div>
+                        <label for="username" class="sr-only">Username</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input id="username" name="username" type="text" required 
+                                class="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                                placeholder="Username">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input id="password" name="password" type="password" required
+                                class="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                                placeholder="Password">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox"
+                            class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-primary hover:text-moss">Forgot your password?</a>
+                    </div>
+                </div>
+
+                <!-- Sign In Button -->
+                <div>
+                    <button type="submit"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-moss focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 transform hover:-translate-y-0.5">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i class="fas fa-sign-in-alt text-white group-hover:text-white/80"></i>
+                        </span>
+                        Sign in
+                    </button>
+                </div>
+
+                <!-- Sign Up Link -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Don't have an account?
+                        <a href="signin.html?signup=true" class="font-medium text-primary hover:text-moss">Sign up now</a>
+                    </p>
+                </div>
+
+                <!-- Features Preview -->
+                <div class="pt-6 border-t border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Unlock these features:</h3>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-fire text-orange-500 text-xl mb-2"></i>
+                            <p class="text-xs font-medium">Track Streaks</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-trophy text-yellow-500 text-xl mb-2"></i>
+                            <p class="text-xs font-medium">Earn Achievements</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-chart-line text-blue-500 text-xl mb-2"></i>
+                            <p class="text-xs font-medium">Track Progress</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-star text-purple-500 text-xl mb-2"></i>
+                            <p class="text-xs font-medium">Level Up</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/services.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/auth-init.js"></script>
+</body>
+</html>
