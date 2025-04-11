@@ -69,15 +69,16 @@
                 
                 <!-- Timer Circle -->
                 <div class="relative w-64 h-64 mx-auto mb-8">
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="text-6xl font-bold text-primary" id="time-display">25:00</div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <div class="text-7xl font-bold text-primary font-poppins tracking-tight" id="time-display">25:00</div>
+                        <div class="text-sm text-gray-500 mt-2" id="timer-status">Work Session</div>
                     </div>
                     <svg class="transform -rotate-90 w-full h-full">
                         <circle
                             cx="32"
                             cy="32"
                             r="28"
-                            stroke-width="8"
+                            stroke-width="6"
                             stroke="#E5E7EB"
                             fill="none"
                             class="w-full h-full"
@@ -88,28 +89,39 @@
                             cx="32"
                             cy="32"
                             r="28"
-                            stroke-width="8"
-                            stroke="#4F46E5"
+                            stroke-width="6"
+                            stroke="#2F855A"
                             fill="none"
                             stroke-dasharray="175.93"
                             stroke-dashoffset="0"
-                            class="w-full h-full"
+                            class="w-full h-full transition-all duration-1000 ease-linear"
                             style="transform: scale(3.2); transform-origin: center;"
                         ></circle>
                     </svg>
                 </div>
 
                 <!-- Timer Controls -->
-                <div class="mt-8 text-center space-x-2">
-                    <button type="button" id="start-btn" class="inline-flex items-center justify-center w-8 h-8 bg-green-500 text-white transition-colors duration-200 hover:bg-green-600 focus:outline-none">
-                        <i class="fas fa-play text-xs"></i>
+                <div class="mt-8 text-center space-x-4">
+                    <button type="button" id="start-btn" 
+                            class="inline-flex items-center justify-center px-6 py-3 text-lg font-medium bg-primary text-white rounded-lg transition-all duration-200 hover:bg-green-700 hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+                        <i class="fas fa-play mr-2"></i>
+                        Start Focus
                     </button>
-                    <button type="button" id="pause-btn" class="hidden items-center justify-center w-8 h-8 bg-yellow-500 text-white transition-colors duration-200 hover:bg-yellow-600 focus:outline-none">
-                        <i class="fas fa-pause text-xs"></i>
+                    <button type="button" id="pause-btn" 
+                            class="hidden items-center justify-center px-6 py-3 text-lg font-medium bg-yellow-500 text-white rounded-lg transition-all duration-200 hover:bg-yellow-600 hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
+                        <i class="fas fa-pause mr-2"></i>
+                        Pause
                     </button>
-                    <button type="button" id="reset-btn" class="inline-flex items-center justify-center w-8 h-8 bg-gray-400 text-white transition-colors duration-200 hover:bg-gray-500 focus:outline-none">
-                        <i class="fas fa-redo text-xs"></i>
+                    <button type="button" id="reset-btn" 
+                            class="inline-flex items-center justify-center px-6 py-3 text-lg font-medium bg-gray-400 text-white rounded-lg transition-all duration-200 hover:bg-gray-500 hover:shadow-lg transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">
+                        <i class="fas fa-redo mr-2"></i>
+                        Reset
                     </button>
+                </div>
+
+                <!-- Motivational Message -->
+                <div class="mt-6 text-gray-600 italic" id="motivation-message">
+                    "The only way to do great work is to love what you do." - Steve Jobs
                 </div>
 
                 <!-- Session Info -->
