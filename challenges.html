@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Antidote - Challenges</title>
+    <link rel="icon" href="https://example.com/favicon.ico" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -28,7 +29,7 @@
         }
     </script>
 </head>
-    <body class="bg-gray-50 font-inter relative" style="background-image: url('https://forestapp.cc/download/og.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+<body class="bg-gray-50 font-inter relative" style="background-image: url('https://forestapp.cc/download/og.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
     <!-- Navigation -->
     <nav class="bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +41,7 @@
                                 <span class="relative mr-2 inline-block" style="width: 32px; height: 32px;">
                                     <i class="fas fa-flask text-primary text-2xl absolute bottom-0 left-1/2 transform -translate-x-1/2" style="z-index: 1"></i>
                                     <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2" style="z-index: 2; width: 16px; height: 8px; background-color: #7C2D12; border-radius: 2px 2px 8px 8px;"></div>
-                                <i class="fas fa-seedling text-primary text-xl absolute bottom-1 left-1/2 transform -translate-x-1/2 -translate-y-2" style="z-index: 3"></i>
+                                    <i class="fas fa-seedling text-primary text-xl absolute bottom-1 left-1/2 transform -translate-x-1/2 -translate-y-2" style="z-index: 3"></i>
                                 </span>
                                 Antidote
                             </a>
@@ -50,6 +51,7 @@
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                         <a href="timer.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Timer</a>
                         <a href="distraction.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Focus Mode</a>
+                        <a href="dashboard.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Dashboard</a>
                         <a href="challenges.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Challenges</a>
                         <a href="streak.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Streak</a>
                         <a href="goals.html" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">Goals</a>
@@ -78,16 +80,16 @@
 
             <!-- Active Challenges -->
             <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                <h3 class="text-xl font-semibold text-gray-900 mb-6 font-poppins">Active Challenges</h3>
+                <h3 class="text-xl font-semibold text-gray-900 mb-6 font-poppins">Your Active Challenges</h3>
                 <div class="space-y-4" id="active-challenges">
                     <!-- Challenge 1 -->
-                    <div class="border rounded-lg p-4 hover:border-primary transition-colors duration-200">
+                    <div class="border rounded-lg p-4 hover:border-primary transition-colors duration-200" id="challenge-item">
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h4 class="font-semibold text-lg text-gray-900">Weekly Focus Sprint</h4>
                                 <p class="text-gray-600 text-sm">Complete 20 Pomodoro sessions this week</p>
                             </div>
-                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">In Progress</span>
+                            <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded" id="challenge-status">In Progress</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <div class="flex -space-x-2">
