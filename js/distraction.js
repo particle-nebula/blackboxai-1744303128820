@@ -40,15 +40,78 @@ let reminderMessages = {
 function loadState() {
     const savedState = localStorage.getItem('focusMode');
     if (savedState) {
-        isFocusModeActive = JSON.parse(savedState);
+        const state = JSON.parse(savedState);
+        isFocusModeActive = state.isActive;
+        currentMode = state.mode || 'strict';
         updateUI(isFocusModeActive);
         focusToggle.checked = isFocusModeActive;
+        updateModeSelection();
     }
 }
 
 // Save state to localStorage
 function saveState() {
-    localStorage.setItem('focusMode', JSON.stringify(isFocusModeActive));
+    const state = {
+        isActive: isFocusModeActive,
+        mode: currentMode
+    };
+    localStorage.setItem('focusMode', JSON.stringify(state));
+}
+
+// Switch focus mode
+function switchMode(mode) {
+    currentMode = mode;
+    updateModeSelection();
+    
+    // Clear any existing reminder interval
+    if (reminderInterval) {
+        clearInterval(reminderInterval);
+        reminderInterval = null;
+    }
+    
+    // Show/hide reminder settings
+    reminderSettings.classList.toggle('hidden', mode === 'strict');
+    
+    // Update icon based on mode
+    const icon = focusIcon.querySelector('i');
+    icon.className = mode === 'strict' ? 
+        'fas fa-shield-alt text-4xl text-gray-400' :
+        'fas fa-bell text-4xl text-gray-400';
+        
+    saveState();
+}
+
+// Update mode selection UI
+function updateModeSelection() {
+    strictModeBtn.classList.toggle('bg-primary', currentMode === 'strict');
+    strictModeBtn.classList.toggle('text-white', currentMode === 'strict');
+    gentleModeBtn.classList.toggle('bg-secondary', currentMode === 'gentle');
+    gentleModeBtn.classList.toggle('text-white', currentMode === 'gentle');
+}
+
+// Get random reminder message
+function getRandomMessage() {
+    const style = reminderStyle.value;
+    const messages = reminderMessages[style];
+    return messages[Math.floor(Math.random() * messages.length)];
+}
+
+// Start reminder interval
+function startReminders() {
+    if (currentMode === 'gentle' && isFocusModeActive) {
+        const frequency = parseInt(reminderFrequency.value) * 60 * 1000; // Convert minutes to milliseconds
+        reminderInterval = setInterval(() => {
+            showNotification(getRandomMessage(), 'reminder');
+        }, frequency);
+    }
+}
+
+// Stop reminder interval
+function stopReminders() {
+    if (reminderInterval) {
+        clearInterval(reminderInterval);
+        reminderInterval = null;
+    }
 }
 
 // Update UI based on focus mode state
@@ -85,18 +148,44 @@ function toggleFocusMode() {
     // Notify integration service
     window.antidoteServices.eventBus.publish(
         window.antidoteServices.EventTypes.FOCUS_MODE_CHANGE,
-        { isActive: isFocusModeActive }
+        { 
+            isActive: isFocusModeActive,
+            mode: currentMode
+        }
     );
     
-    // Show notification
-    showNotification(isFocusModeActive);
+    // Show appropriate notification
+    const message = isFocusModeActive ? 
+        (currentMode === 'strict' ? 'Focus Mode Activated - Distractions Blocked' : 'Focus Mode Activated - Gentle Reminders Enabled') :
+        'Focus Mode Deactivated';
+    showNotification(message, 'status');
+    
+    // Handle reminders
+    if (isFocusModeActive && currentMode === 'gentle') {
+        startReminders();
+    } else {
+        stopReminders();
+    }
 }
 
 // Show notification
-function showNotification(isActive) {
+function showNotification(message, type = 'status') {
     const notification = document.createElement('div');
-    notification.className = `fixed bottom-4 right-4 ${isActive ? 'bg-primary' : 'bg-gray-700'} text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300 translate-y-0`;
-    notification.textContent = isActive ? 'Focus Mode Activated' : 'Focus Mode Deactivated';
+    let bgColor;
+    
+    switch (type) {
+        case 'reminder':
+            bgColor = currentMode === 'gentle' ? 'bg-secondary' : 'bg-primary';
+            break;
+        case 'block':
+            bgColor = 'bg-red-500';
+            break;
+        default:
+            bgColor = isFocusModeActive ? 'bg-primary' : 'bg-gray-700';
+    }
+    
+    notification.className = `fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300 translate-y-0`;
+    notification.textContent = message;
     
     document.body.appendChild(notification);
     
@@ -112,22 +201,45 @@ function showNotification(isActive) {
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     loadState();
-    focusToggle.addEventListener('change', toggleFocusMode);
+    
+    // Mode selection listeners
+    strictModeBtn.addEventListener('click', () => switchMode('strict'));
+    gentleModeBtn.addEventListener('click', () => switchMode('gentle'));
+    
+    // Focus toggle listener
+    focusToggle.addEventListener('change', () => {
+        toggleFocusMode();
+        if (isFocusModeActive) {
+            startReminders();
+        } else {
+            stopReminders();
+        }
+    });
+    
+    // Reminder settings listeners
+    reminderFrequency.addEventListener('change', () => {
+        if (isFocusModeActive) {
+            stopReminders();
+            startReminders();
+        }
+    });
+    
+    reminderStyle.addEventListener('change', () => {
+        if (isFocusModeActive && currentMode === 'gentle') {
+            showNotification(getRandomMessage(), 'reminder');
+        }
+    });
 });
 
 // Handle blocked sites list interactions
 document.getElementById('blocked-list').addEventListener('click', (e) => {
     const item = e.target.closest('.flex.items-center.justify-between');
     if (item && isFocusModeActive) {
-        // Simulate blocking attempt
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
-        notification.textContent = 'Access blocked while Focus Mode is active';
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 3000);
+        if (currentMode === 'strict') {
+            showNotification('Access blocked while Focus Mode is active', 'block');
+        } else {
+            showNotification(getRandomMessage(), 'reminder');
+        }
     }
 });
 
