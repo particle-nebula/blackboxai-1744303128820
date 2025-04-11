@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login</title>
+</head>
+<body>
+    <h2>Test Login</h2>
+    <p>Username: demo</p>
+    <p>Password: demo123</p>
+    <button onclick="testLogin()">Test Login</button>
+    <div id="result"></div>
+
+    <script src="js/services.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function testLogin() {
+            const result = handleSignIn('demo', 'demo123');
+            if (result) {
+                window.location.href = 'dashboard.html';
+            } else {
+                document.getElementById('result').textContent = 'Login failed';
+            }
+        }
+    </script>
+</body>
+</html>
