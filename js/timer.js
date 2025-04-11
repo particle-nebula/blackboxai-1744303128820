@@ -1,9 +1,33 @@
 
 // Timer Constants
-const WORK_TIME = 25 * 60; // 25 minutes in seconds
-const SHORT_BREAK = 5 * 60; // 5 minutes in seconds
-const LONG_BREAK = 15 * 60; // 15 minutes in seconds
+let WORK_TIME = 25 * 60; // 25 minutes in seconds
+let SHORT_BREAK = 5 * 60; // 5 minutes in seconds
+let LONG_BREAK = 15 * 60; // 15 minutes in seconds
 const SESSIONS_BEFORE_LONG_BREAK = 4;
+
+// User Progress Elements
+const userLevelDisplay = document.getElementById('user-level');
+const usernameDisplay = document.getElementById('username-display');
+const levelDisplay = document.getElementById('level-display');
+const xpDisplay = document.getElementById('xp-display');
+const nextLevelXpDisplay = document.getElementById('next-level-xp');
+const xpProgress = document.getElementById('xp-progress');
+const dailyFocusTime = document.getElementById('daily-focus-time');
+const dailyXpGained = document.getElementById('daily-xp-gained');
+const focusProgress = document.getElementById('focus-progress');
+const xpDailyProgress = document.getElementById('xp-daily-progress');
+
+// Timer Settings Elements
+const customMinutesInput = document.getElementById('custom-minutes');
+const breakMinutesInput = document.getElementById('break-minutes');
+const presetButtons = document.querySelectorAll('.preset-btn');
+
+// Daily Progress State
+let dailyStats = {
+    focusMinutes: 0,
+    xpGained: 0,
+    lastUpdate: new Date().toDateString()
+};
 
 // Motivational Messages
 const MESSAGES = {
@@ -112,13 +136,48 @@ function updateDisplays() {
     timerProgress.style.strokeDashoffset = circumference * (1 - progress);
 }
 
-// Show notification
-function showNotification(message) {
+// Show notification with XP gain
+function showNotification(message, xpGain = 0) {
     const notification = document.createElement('div');
-    notification.className = 'fixed bottom-4 right-4 bg-primary text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300';
-    notification.textContent = message;
+    notification.className = 'fixed bottom-4 right-4 bg-primary text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300';
+    
+    let content = message;
+    if (xpGain > 0) {
+        content += `
+            <div class="flex items-center mt-2 text-sm">
+                <i class="fas fa-star text-yellow-300 mr-2"></i>
+                <span>+${xpGain} XP</span>
+            </div>
+        `;
+    }
+    
+    notification.innerHTML = content;
     document.body.appendChild(notification);
 
+    // Add floating XP animation if there's XP gain
+    if (xpGain > 0) {
+        const xpFloat = document.createElement('div');
+        xpFloat.className = 'fixed text-xl font-bold text-yellow-400';
+        xpFloat.style.left = `${Math.random() * 60 + 20}%`;
+        xpFloat.style.bottom = '20%';
+        xpFloat.textContent = `+${xpGain} XP`;
+        
+        // Add glow effect
+        xpFloat.style.textShadow = '0 0 10px rgba(250, 204, 21, 0.5)';
+        
+        document.body.appendChild(xpFloat);
+
+        // Animate XP floating up
+        xpFloat.animate([
+            { transform: 'translateY(0)', opacity: 1 },
+            { transform: 'translateY(-100px)', opacity: 0 }
+        ], {
+            duration: 1500,
+            easing: 'ease-out'
+        }).onfinish = () => xpFloat.remove();
+    }
+
+    // Slide out notification
     setTimeout(() => {
         notification.style.transform = 'translateY(200%)';
         setTimeout(() => {
@@ -127,24 +186,115 @@ function showNotification(message) {
     }, 3000);
 }
 
+// Add celebration effect
+function showCelebration() {
+    // Create and append canvas for confetti
+    const canvas = document.createElement('canvas');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '9999';
+    document.body.appendChild(canvas);
+
+    // Adjust canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+
+    // Confetti particles
+    const particles = [];
+    const colors = ['#2F855A', '#66A80F', '#975A16', '#047857'];
+
+    for (let i = 0; i < 100; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            size: Math.random() * 5 + 5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            speed: Math.random() * 3 + 2,
+            angle: Math.random() * Math.PI * 2,
+            spin: Math.random() * 0.2 - 0.1
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let complete = true;
+        particles.forEach(particle => {
+            particle.y += particle.speed;
+            particle.angle += particle.spin;
+
+            ctx.save();
+            ctx.translate(particle.x, particle.y);
+            ctx.rotate(particle.angle);
+            ctx.fillStyle = particle.color;
+            ctx.fillRect(-particle.size/2, -particle.size/2, particle.size, particle.size);
+            ctx.restore();
+
+            if (particle.y < canvas.height) complete = false;
+        });
+
+        if (!complete) {
+            requestAnimationFrame(animate);
+        } else {
+            canvas.remove();
+        }
+    }
+
+    animate();
+}
+
 // Switch timer mode
 function switchMode() {
     playNotification();
     
     if (currentMode === 'work') {
+        // Calculate XP earned for completed work session
+        const xpEarned = Math.floor(WORK_TIME / 60) * 10; // 10 XP per minute
+        
+        // Update daily stats
+        dailyStats.focusMinutes += Math.floor(WORK_TIME / 60);
+        dailyStats.xpGained += xpEarned;
+        saveDailyStats();
+        updateDailyProgress();
+        
         workSessions++;
         if (workSessions % SESSIONS_BEFORE_LONG_BREAK === 0) {
             currentMode = 'long-break';
             timeRemaining = LONG_BREAK;
             longBreaks++;
-            showNotification('Time for a long break!');
+            showNotification('Time for a long break!', xpEarned);
             timerStatus.textContent = 'Long Break';
+            // Extra XP bonus for completing 4 sessions
+            const bonusXP = 50;
+            dailyStats.xpGained += bonusXP;
+            saveDailyStats();
+            showCelebration();
+            setTimeout(() => {
+                showNotification('Bonus XP for completing 4 sessions!', bonusXP);
+                updateDailyProgress();
+            }, 1500);
         } else {
             currentMode = 'short-break';
             timeRemaining = SHORT_BREAK;
             shortBreaks++;
-            showNotification('Time for a short break!');
+            showNotification('Time for a short break!', xpEarned);
             timerStatus.textContent = 'Short Break';
+        }
+        
+        // Update user progress if authenticated
+        if (window.antidoteServices && window.antidoteServices.eventBus) {
+            window.antidoteServices.eventBus.publish(
+                window.antidoteServices.EventTypes.TIMER_COMPLETE,
+                { 
+                    duration: WORK_TIME,
+                    xpEarned: xpEarned + (workSessions % SESSIONS_BEFORE_LONG_BREAK === 0 ? 50 : 0)
+                }
+            );
         }
     } else {
         currentMode = 'work';
@@ -156,6 +306,43 @@ function switchMode() {
     updateMotivationMessage();
     updateDisplays();
     saveState();
+    
+    // Add sparkle effect to timer display
+    addSparkleEffect();
+}
+
+// Add sparkle effect to timer
+function addSparkleEffect() {
+    const sparkleContainer = document.createElement('div');
+    sparkleContainer.style.position = 'absolute';
+    sparkleContainer.style.inset = '0';
+    sparkleContainer.style.pointerEvents = 'none';
+    
+    for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'absolute w-1 h-1 bg-yellow-300 rounded-full';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animation = `sparkle ${0.5 + Math.random()}s ease-in-out`;
+        sparkleContainer.appendChild(sparkle);
+    }
+    
+    timeDisplay.parentElement.appendChild(sparkleContainer);
+    
+    // Add sparkle animation style if not already added
+    if (!document.querySelector('#sparkle-style')) {
+        const style = document.createElement('style');
+        style.id = 'sparkle-style';
+        style.textContent = `
+            @keyframes sparkle {
+                0%, 100% { transform: scale(0); opacity: 0; }
+                50% { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    setTimeout(() => sparkleContainer.remove(), 1000);
 }
 
 // Timer tick function
@@ -211,9 +398,101 @@ function resetTimer() {
     updateDisplays();
 }
 
+// Update timer durations
+function updateTimerDurations() {
+    if (!isRunning) {
+        const workMinutes = parseInt(customMinutesInput.value);
+        const breakMinutes = parseInt(breakMinutesInput.value);
+        
+        if (workMinutes >= 1 && workMinutes <= 120 && breakMinutes >= 1 && breakMinutes <= 30) {
+            WORK_TIME = workMinutes * 60;
+            SHORT_BREAK = breakMinutes * 60;
+            timeRemaining = WORK_TIME;
+            updateDisplays();
+            showNotification('Timer settings updated');
+        }
+    } else {
+        showNotification('Cannot update settings while timer is running');
+    }
+}
+
+// Handle preset selection
+function handlePresetSelection(duration, breakTime) {
+    if (!isRunning) {
+        customMinutesInput.value = duration;
+        breakMinutesInput.value = breakTime;
+        updateTimerDurations();
+    } else {
+        showNotification('Cannot change preset while timer is running');
+    }
+}
+
+// Load daily stats from localStorage
+function loadDailyStats() {
+    const saved = localStorage.getItem('dailyStats');
+    if (saved) {
+        const stats = JSON.parse(saved);
+        if (stats.lastUpdate === new Date().toDateString()) {
+            dailyStats = stats;
+        } else {
+            // Reset stats for new day
+            dailyStats = {
+                focusMinutes: 0,
+                xpGained: 0,
+                lastUpdate: new Date().toDateString()
+            };
+        }
+        updateDailyProgress();
+    }
+}
+
+// Save daily stats to localStorage
+function saveDailyStats() {
+    localStorage.setItem('dailyStats', JSON.stringify(dailyStats));
+}
+
+// Update daily progress displays
+function updateDailyProgress() {
+    dailyFocusTime.textContent = `${dailyStats.focusMinutes} minutes`;
+    dailyXpGained.textContent = `${dailyStats.xpGained} XP`;
+    
+    // Update progress bars (assuming daily goals of 120 minutes and 1000 XP)
+    focusProgress.style.width = `${Math.min(100, (dailyStats.focusMinutes / 120) * 100)}%`;
+    xpDailyProgress.style.width = `${Math.min(100, (dailyStats.xpGained / 1000) * 100)}%`;
+}
+
+// Update user progress displays
+function updateUserProgress() {
+    if (window.antidoteServices && window.antidoteServices.getCurrentUser) {
+        const user = window.antidoteServices.getCurrentUser();
+        if (user) {
+            usernameDisplay.textContent = user.username;
+            userLevelDisplay.textContent = user.level;
+            levelDisplay.textContent = user.level;
+            xpDisplay.textContent = `${user.xp} XP`;
+            
+            const nextLevelXP = Math.floor(1000 * Math.pow(1.5, user.level - 1));
+            nextLevelXpDisplay.textContent = `${nextLevelXP} XP`;
+            
+            // Update XP progress bar
+            const progress = (user.xp / nextLevelXP) * 100;
+            xpProgress.style.width = `${Math.min(100, progress)}%`;
+            
+            // Add pulse animation if close to level up
+            if (progress >= 90) {
+                xpProgress.classList.add('animate-pulse');
+            } else {
+                xpProgress.classList.remove('animate-pulse');
+            }
+        }
+    }
+}
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     loadState();
+    loadDailyStats();
+    
     // Hide pause button initially
     pauseButton.style.display = 'none';
     startButton.style.display = 'inline-flex';
@@ -222,7 +501,34 @@ document.addEventListener('DOMContentLoaded', () => {
     timerStatus.textContent = 'Work Session';
     updateMotivationMessage();
     
+    // Timer control listeners
     startButton.addEventListener('click', startTimer);
     pauseButton.addEventListener('click', pauseTimer);
     resetButton.addEventListener('click', resetTimer);
+    
+    // Timer settings listeners
+    customMinutesInput.addEventListener('change', updateTimerDurations);
+    breakMinutesInput.addEventListener('change', updateTimerDurations);
+    
+    // Preset button listeners
+    presetButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const duration = parseInt(button.dataset.duration);
+            const breakTime = parseInt(button.dataset.break);
+            handlePresetSelection(duration, breakTime);
+        });
+    });
+    
+    // Initialize user progress
+    updateUserProgress();
+    
+    // Subscribe to user state updates
+    if (window.antidoteServices && window.antidoteServices.eventBus) {
+        window.antidoteServices.eventBus.subscribe(
+            window.antidoteServices.EventTypes.USER_STATE_UPDATE,
+            () => {
+                updateUserProgress();
+            }
+        );
+    }
 });
