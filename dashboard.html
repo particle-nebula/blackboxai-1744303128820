@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antidote - Your Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2F855A',    // Forest green
+                        secondary: '#66A80F',  // Leaf green
+                        accent: '#975A16',     // Earth brown
+                        sage: '#9CA3AF',       // Soft sage
+                        moss: '#047857',       // Deep moss
+                        soil: '#92400E'        // Rich soil
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-inter">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="flex flex-col items-center">
+                            <a href="index.html" class="font-poppins font-bold text-2xl text-primary flex items-center">
+                                <span class="relative mr-2 inline-block" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-flask text-primary text-2xl absolute bottom-0 left-1/2 transform -translate-x-1/2" style="z-index: 1"></i>
+                                    <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2" style="z-index: 2; width: 16px; height: 8px; background-color: #7C2D12; border-radius: 2px 2px 8px 8px;"></div>
+                                    <i class="fas fa-seedling text-primary text-xl absolute bottom-1 left-1/2 transform -translate-x-1/2 -translate-y-2" style="z-index: 3"></i>
+                                </span>
+                                Antidote
+                            </a>
+                            <span class="text-xs text-gray-600 mt-1">The Cure Starts Within</span>
+                        </div>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="timer.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-white rounded-lg transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md transform hover:-translate-y-0.5">Timer</a>
+                        <a href="distraction.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-white rounded-lg transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md transform hover:-translate-y-0.5">Focus Mode</a>
+                        <a href="challenges.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-white rounded-lg transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md transform hover:-translate-y-0.5">Challenges</a>
+                        <a href="streak.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-white rounded-lg transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md transform hover:-translate-y-0.5">Streak</a>
+                        <a href="goals.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-white rounded-lg transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md transform hover:-translate-y-0.5">Goals</a>
+                    </div>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center space-x-4" id="auth-buttons">
+                    <a href="signin.html" class="inline-flex items-center px-4 py-2 text-sm font-medium text-primary bg-white rounded-lg transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md transform hover:-translate-y-0.5">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Sign In
+                    </a>
+                    <a href="signin.html?signup=true" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg transition-all duration-200 hover:bg-moss hover:shadow-md transform hover:-translate-y-0.5">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Sign Up
+                    </a>
+                </div>
+
+                <!-- User Profile (Hidden by default) -->
+                <div class="hidden items-center space-x-4" id="user-profile">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex flex-col items-end">
+                            <span id="nav-username" class="text-sm font-medium text-gray-900">Guest</span>
+                            <div class="flex items-center">
+                                <span class="text-xs text-gray-600">Level</span>
+                                <span id="nav-level" class="ml-1 text-xs font-medium text-primary">1</span>
+                            </div>
+                        </div>
+                        <button id="logout-btn" class="inline-flex items-center p-2 text-gray-500 hover:text-primary transition-colors">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Growth Progress -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-6 font-poppins">Your Growth Journey</h2>
+                <div class="flex items-center justify-center mb-8">
+                    <div id="plant-container" class="relative w-48 h-48">
+                        <!-- Plant stages will be dynamically added here -->
+                        <i id="current-plant" class="fas fa-seedling text-6xl text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">Current Stage:</span>
+                        <span id="growth-stage" class="text-primary">Sprout</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">Health:</span>
+                        <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="plant-health" class="h-full bg-primary transition-all duration-500" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">Next Stage:</span>
+                        <span id="next-stage" class="text-gray-600">Sapling (Level 5)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level Progress -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-6 font-poppins">Level Progress</h2>
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span class="text-4xl font-bold text-primary" id="current-level">1</span>
+                        <span class="text-gray-600 ml-2">Level</span>
+                    </div>
+                    <div class="text-right">
+                        <span id="current-xp" class="text-xl font-semibold text-primary">0</span>
+                        <span class="text-gray-600">/</span>
+                        <span id="next-level-xp" class="text-gray-600">1000</span>
+                        <span class="text-gray-600">XP</span>
+                    </div>
+                </div>
+                <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-6">
+                    <div id="xp-progress" class="h-full bg-primary transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-2xl font-bold text-primary mb-1" id="focus-minutes">0</div>
+                        <div class="text-sm text-gray-600">Minutes Focused</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-2xl font-bold text-secondary mb-1" id="current-streak">0</div>
+                        <div class="text-sm text-gray-600">Day Streak</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-2xl font-bold text-accent mb-1" id="achievements-count">0</div>
+                        <div class="text-sm text-gray-600">Achievements</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-lg p-6 lg:col-span-2">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-6 font-poppins">Recent Activity</h2>
+                <div class="space-y-4" id="activity-feed">
+                    <!-- Activity items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/services.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/auth-init.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
