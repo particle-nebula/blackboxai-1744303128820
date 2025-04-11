@@ -6,8 +6,55 @@ const EventTypes = {
     FOCUS_MODE_CHANGE: 'focusModeChange',
     GOAL_PROGRESS: 'goalProgress',
     CHALLENGE_UPDATE: 'challengeUpdate',
-    STREAK_UPDATE: 'streakUpdate'
+    STREAK_UPDATE: 'streakUpdate',
+    USER_STATE_UPDATE: 'userStateUpdate',
+    AUTH_ERROR: 'authError'
 };
+
+// User state
+let currentUser = null;
+
+// Auth functions
+function getCurrentUser() {
+    return currentUser;
+}
+
+function login(username, password) {
+    // Mock login - replace with actual backend integration
+    if (username === 'demo' && password === 'demo123') {
+        currentUser = {
+            username: 'demo',
+            level: 1,
+            xp: 0,
+            streak: 0,
+            achievements: [],
+            focusMinutes: 0,
+            lastLogin: new Date()
+        };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        eventBus.publish(EventTypes.USER_STATE_UPDATE, { user: currentUser });
+        return true;
+    }
+    eventBus.publish(EventTypes.AUTH_ERROR, { message: 'Invalid credentials' });
+    return false;
+}
+
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    eventBus.publish(EventTypes.USER_STATE_UPDATE, { user: null });
+}
+
+// Load saved user state
+function loadUserState() {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        eventBus.publish(EventTypes.USER_STATE_UPDATE, { user: currentUser });
+        return true;
+    }
+    return false;
+}
 
 // Central Event Bus
 class EventBus {
@@ -156,5 +203,12 @@ class IntegrationService {
 window.antidoteServices = {
     eventBus,
     EventTypes,
-    integration: new IntegrationService()
+    integration: new IntegrationService(),
+    getCurrentUser,
+    login,
+    logout,
+    loadUserState
 };
+
+// Initialize user state
+loadUserState();
